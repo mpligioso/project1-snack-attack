@@ -1,0 +1,1 @@
+var snacks_array = [];
