@@ -1,3 +1,57 @@
+/* light blue : #61D8FF;
+orange: #ff8861 */
+
 body {
+  background-image: url('../images/food.jpg');
+  background-repeat: repeat;
   margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;
+  color: black;
 }
+
+h1 {
+  font-size: 4em;
+  color: rgb(255, 136, 97);
+  text-transform: uppercase;
+  text-shadow: -5px 5px rgb(255, 255, 255);;
+}
+
+h2 {
+  font-size: 2em;
+  text-transform: uppercase;
+}
+
+span {
+  font-size: 2.5em;
+}
+
+.game {
+  text-align: center;
+  background: white;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.layout{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.timer {
+  background:  rgb(255, 136, 97);
+  width: 20%;
+}
+
+.points {
+  background:  rgb(255, 136, 97);
+  width: 20%;
+}
+

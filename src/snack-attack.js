@@ -1,10 +1,13 @@
 var canvas = document.getElementById('snackboard');
 var ctx = canvas.getContext('2d');
 
+var canvasWidth = 800;
+var canvasHeight = 600;
+
 function Player (snackboard){
   //starting point
-  this.x = 600;
-  this.y = 400;
+  this.x = 400;
+  this.y = 300;
   this.speed = 0;
   this.points = 0;
   // this.image = new Image();
@@ -12,63 +15,44 @@ function Player (snackboard){
 
   document.onkeydown = (e) => {
     e.preventDefault()
-    // if ((this.x < canvas.width -50) || (this.y < canvas.height - 50)){
+    // if ((this.x < canvas.width-10 || this.x-10>0)
+    // && (this.y > canvas.height - 50) || this.y-10>0) {
     switch (e.keyCode) {
       case 38:
+        if (this.y - 10 > 10){
         this.y -= 10;
-        console.log("up")
+        };
         break;
       case 40:
+        if (this.y + 10 < canvasHeight-10){
         this.y += 10;
-        console.log("down")
+        };
         break;
       case 37:
+        if (this.x - 10 > 10){
         this.x -= 10;
-        console.log("left")
+        };
         break;
       case 39:
+        if (this.x + 10 < canvasWidth-10) {
         this.x += 10;
-        console.log("right")
+        };
         break;
       }
       //Stop player from going outside of borders;
-      if (this.x-10 > canvas.width || this.x-10 < 0) {
-        this.x *= -1;
-      }
-      if (this.y-10 > canvas.height || this.y-10 < 0) {
-        this.y *= -1;
-      };
-    // };
+      // if (this.x-10 > canvas.width || this.x-10 < 0) {
+      //   this.x *= -5;
+      // }
+      // if (this.y-10 > canvas.height || this.y-10 < 0) {
+      //   this.y *= -5;
+      // };
     };
-
-  // document.onkeydown = (e) => {
-  //   // e.preventDefault()
-  //   switch (e.keyCode) {
-  //     case 38:
-  //       this.move(0,-1);
-  //       console.log("up")
-  //       break;
-  //     case 40:
-  //       this.move(0,1);
-  //       console.log("down")
-  //       break;
-  //     case 37:
-  //       this.move(-1,0);
-  //       console.log("left")
-  //       break;
-  //     case 39:
-  //       this.move(1,0);
-  //       console.log("right")
-  //       break;
-  //     }
-  // }
 }
 
 Player.prototype.drawPlayer = function(){
   ctx.fillStyle = "#000000";
   ctx.beginPath();
-  // to have a circle
-  ctx.arc(this.x, this.y, 50, 0, 2*Math.PI);
+  ctx.arc(this.x, this.y, 20, 0, 2*Math.PI);
   // ctx.drawImage(this.img, this.x-10, this.y-10, 20, 20)
   ctx.fill();
   ctx.closePath();
@@ -106,14 +90,15 @@ Player.prototype.eatItem = function(item){
   return eaten;
 }
 
-// Player.prototype.eatItem = function(item){
-//   return (this.x === item.x && this.y === item.y);
+// SnackAttack.prototype.isEaten = function(){
+//   if (this.player.eatItem()){
+
+//   }
 // }
 
 function NegativeItem() {
-  //to give random location on board
-  this.x = Math.floor(Math.random()* 1200)-30;
-  this.y = Math.floor(Math.random()* 800)-30;
+  this.x = Math.floor(Math.random()* canvasWidth)-50;
+  this.y = Math.floor(Math.random()* canvasHeight)-50;
   // this.img = new Image();
   // this.img.src = ('')
 }
@@ -124,8 +109,8 @@ NegativeItem.prototype.draw = function(){
 }
 
 function PowerSnack() {
-  this.x = Math.floor(Math.random()* 1200)-20;
-  this.y = Math.floor(Math.random()* 800)-20;
+  this.x = Math.floor(Math.random()* canvasWidth)-30;
+  this.y = Math.floor(Math.random()* canvasHeight)-30;
 }
 
 PowerSnack.prototype.draw = function(){
@@ -150,10 +135,11 @@ function SnackAttack() {
 
   this.createObstacles();
   this.createPowerSnack();
+  this.timerCountdown();
 
   this.interval =
     setInterval(()=> {
-      ctx.clearRect(0,0, 1200, 800);
+      ctx.clearRect(0,0, canvasWidth, canvasHeight);
       this.player.drawPlayer();
       this.list_NegativeItems.forEach(function(item){
         item.draw();
@@ -162,13 +148,12 @@ function SnackAttack() {
         item.draw();
       })
 
-
     for (var i = 0; i < this.list_NegativeItems.length; i++){
       if (this.player.eatItem(this.list_NegativeItems[i])){
         this.list_NegativeItems.splice(i,1);
         this.player.points -= 1;
         console.log(this.player.points);
-        ctx.clearRect(0,0, 1200, 800);
+        ctx.clearRect(0,0, canvasWidth, canvasHeight);
       };
     };
 
@@ -177,30 +162,70 @@ function SnackAttack() {
         this.list_PositiveItems.splice(i,1);
         this.player.points += 1;
         console.log(this.player.points);
-        ctx.clearRect(0,0, 1200, 800);
+        ctx.clearRect(0,0, canvasWidth, canvasHeight);
       };
     };
-
-      // if (this.checkCollision(this.player.x, this.player.y, this.list_NegativeItems)){
-
-
-      // }
-      // if (this.checkCollision(this.player.x, this.player.y, this.list_PositiveItems)){
-      //   console.log("I should be able to detect + items")
-      //   ctx.clearRect(0,0, 1200, 800);
-      // }
-
-
-    }, 60/1000);
-
-
-
-    //   }
-    // }
+    $('.points span').text(this.player.points);
+  }, 1000/60);
 }
 
 SnackAttack.prototype.startNewGame = function () {
-  this.ctx.clearRect(0, 0, 1200, 800);
+  this.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  setInterval(()=> {
+    ctx.clearRect(0,0, canvasWidth, canvasHeight);
+    this.player.drawPlayer();
+    this.list_NegativeItems.forEach(function(item){
+      item.draw();
+    });
+    this.list_PositiveItems.forEach(function(item){
+      item.draw();
+    })
+
+  for (var i = 0; i < this.list_NegativeItems.length; i++){
+    if (this.player.eatItem(this.list_NegativeItems[i])){
+      this.list_NegativeItems.splice(i,1);
+      this.player.points -= 1;
+      console.log(this.player.points);
+      ctx.clearRect(0,0, canvasWidth, canvasHeight);
+    };
+  };
+
+  for (var i = 0; i < this.list_PositiveItems.length; i++){
+    if (this.player.eatItem(this.list_PositiveItems[i])){
+      this.list_PositiveItems.splice(i,1);
+      this.player.points += 1;
+      console.log(this.player.points);
+      ctx.clearRect(0,0, canvasWidth, canvasHeight);
+    };
+  };
+}, 1000/60);
+}
+
+// SnackAttack.prototype.getPoints = function(){
+//   for (var i = 0; i < this.list_NegativeItems.length; i++){
+//     if (this.player.eatItem(this.list_NegativeItems[i])){
+//       this.list_NegativeItems.splice(i,1);
+//       this.player.points -= 1;
+//       console.log(this.player.points);
+//       ctx.clearRect(0,0, canvasWidth, canvasHeight);
+//     };
+//   };
+
+//   for (var i = 0; i < this.list_NegativeItems.length; i++){
+//     if (this.player.eatItem(this.list_NegativeItems[i])){
+//       this.list_NegativeItems.splice(i,1);
+//       this.player.points -= 1;
+//       console.log(this.player.points);
+//       ctx.clearRect(0,0, canvasWidth, canvasHeight);
+//     };
+//   };
+// }
+
+SnackAttack.prototype.timerCountdown = function(){
+  setInterval(() => {
+  $('.timer span').text(this.timer);
+  this.timer --;
+  }, 1000)
 }
 
 SnackAttack.prototype.createObstacles = function(){

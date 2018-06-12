@@ -5,16 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Snack Attack</title>
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div style="text-align: center;">
-  <canvas id="snackboard" width="1200" height="800"></canvas>
+<div class="container">
+  <header>
+    <h1>Snack Attack</h1>
+  </header>
+
+  <div class="layout">
+    <section class="timer"><h2>timer: </h2> <span> </span> </section>
+
+    <div class="game">
+      <canvas id="snackboard" width="800" height="600"></canvas>
+    </div>
+
+    <section class="points"><h2>points:</h2><span> </span> </section>
+  </div>
+
 </div>
 
 </body>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="src/snack-attack.js"></script>
+<script type="text/javascript" src="src/start-game.js"></script>
+
 
 </html>
