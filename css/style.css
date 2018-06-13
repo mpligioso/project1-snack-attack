@@ -33,6 +33,62 @@ span {
   background: white;
 }
 
+.start-page {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 800px;
+  height: 600px;
+  text-align: center;
+  background: red;
+}
+
+
+
+.game-over{
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 800px;
+  height: 600px;
+  text-align: center;
+  background: blue;
+}
+
+/*
+.slowfade {
+  animation: fade 0.5s ease-out;
+} */
+
+@keyframes fade {
+  0% {
+    display: block;
+    opacity: 1;
+  }
+
+  100% {
+    display: none;
+    opacity: 0;
+  }
+}
+
+img {
+  width: 100%;
+}
+
+.start-btn {
+  align-self: center;
+  padding: 50px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 2em;
+  opacity: .5;
+  transition: opacity 1s linear;
+}
+
+.start-btn:hover {
+  opacity: 1;
+}
+
 .container {
   display: flex;
   flex-direction: column;

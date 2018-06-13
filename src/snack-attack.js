@@ -14,7 +14,6 @@ function Player (snackboard){
   this.snackboard = snackboard;
 
   document.onkeydown = (e) => {
-    e.preventDefault()
     // if ((this.x < canvas.width-10 || this.x-10>0)
     // && (this.y > canvas.height - 50) || this.y-10>0) {
     switch (e.keyCode) {
@@ -22,21 +21,28 @@ function Player (snackboard){
         if (this.y - 10 > 10){
         this.y -= 10;
         };
+        e.preventDefault()
         break;
+
       case 40:
         if (this.y + 10 < canvasHeight-10){
         this.y += 10;
         };
+        e.preventDefault()
         break;
+
       case 37:
         if (this.x - 10 > 10){
         this.x -= 10;
         };
+        e.preventDefault()
         break;
+
       case 39:
         if (this.x + 10 < canvasWidth-10) {
         this.x += 10;
         };
+        e.preventDefault()
         break;
       }
       //Stop player from going outside of borders;
@@ -118,13 +124,14 @@ PowerSnack.prototype.draw = function(){
   ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 }
 
+var timer = 60;
 
 function SnackAttack() {
   // this.canvas = document.getElementById('snackboard');
   // this.ctx = this.canvas.getContext('2d');
   // this.ctx.clearRect(0,0,1200,800)
 
-  this.timer = 60;
+  // this.timer = 60;
 
   // this.img = new Image();
   // this.img.src = "";
@@ -137,7 +144,7 @@ function SnackAttack() {
   this.createPowerSnack();
   this.timerCountdown();
 
-  this.interval =
+  addingItems =
     setInterval(()=> {
       ctx.clearRect(0,0, canvasWidth, canvasHeight);
       this.player.drawPlayer();
@@ -223,8 +230,8 @@ SnackAttack.prototype.startNewGame = function () {
 
 SnackAttack.prototype.timerCountdown = function(){
   setInterval(() => {
-  $('.timer span').text(this.timer);
-  this.timer --;
+  $('.timer span').text(timer);
+  timer --;
   }, 1000)
 }
 
@@ -271,4 +278,3 @@ SnackAttack.prototype.createPowerSnack = function(){
 //   }).length > 0;
 // };
 
-var snackboard = new SnackAttack();
