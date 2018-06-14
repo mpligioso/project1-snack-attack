@@ -131,7 +131,7 @@ eggsImg.src = "./images/Eggs.png"
 
 var newPlayer = new Player(playerImg, 50, 50);
 
-var snackImages = [beerImg, baconImg, cheeseImg, avoImg, appleImg, eggplantImg, eggsImg];
+var snackImages = [baconImg, cheeseImg, avoImg, appleImg, eggplantImg, eggsImg];
 
 var fixedSnacks = [];
 
@@ -151,7 +151,7 @@ function isGameOver(){
     isOver = true;
     $($gameOverDiv).hide().appendTo(".layout").fadeIn(500);
 
-    if (newPlayer.points > 5) {
+    if (newPlayer.points > 100) {
       $(".game-over").append($winner);
     } else {
       $(".game-over").append($loser);
@@ -170,6 +170,41 @@ function startCountdown() {
       }, 1000);
     };
 
+var stableSnacks = [];
+
+function initSuperSnacks(){
+  for (var i =0; i < 3; i++){
+    stableSnacks.push(new SuperSnack(beerImg, 50, 50));
+    console.log(stableSnacks)
+  };
+
+  // stableSnacks = stableSnacks.filter((item) => {
+  //   return Math.abs(newPlayer.x - item.x) > 50 || Math.abs(newPlayer.y - item.y) > 50;
+  // });
+}
+
+// function initSnacks(snackArray) {
+//   snackArray.forEach((oneSnack) => {S
+//     var isCollision = checkCollision(newPlayer,oneSnack);
+//     if (isCollision){
+//       if(oneSnack.isGood){
+//         oneSnack.isEaten = true;
+//         newPlayer.receivePoints(oneSnack)
+//       } else {
+//         oneSnack.isEaten = true;
+//         newPlayer.receivePoints(oneSnack)
+//       }
+//     }
+//     oneSnack.draw();
+//   });
+// };
+
+// function removeSnacks(snackArray){
+//   snackArray = snackArray.filter(function(oneSnack){
+//     return !oneSnack.isEaten;
+//   });
+// }
+
 
 function addingSnacks() {
   addSnacks =
@@ -184,9 +219,10 @@ function addingSnacks() {
       newSnack.isGood = false;
       newSnack.points *= -1;
     }
-
-    fixedSnacks.push(newSnack);
-  }, 600)
+    if(fixedSnacks.length < 15){
+      fixedSnacks.push(newSnack);
+    };
+  }, 800)
 };
 
 function initGame () {
@@ -197,6 +233,27 @@ function initGame () {
     newPlayer.move();
 
     $('.points span').text(newPlayer.points);
+
+
+
+    stableSnacks.forEach((oneSnack) => {
+      var isCollision = checkCollision(newPlayer,oneSnack);
+      if (isCollision){
+        if(oneSnack.isGood){
+          oneSnack.isEaten = true;
+          newPlayer.receivePoints(oneSnack)
+        } else {
+          oneSnack.isEaten = true;
+          newPlayer.receivePoints(oneSnack)
+        }
+      }
+      oneSnack.draw();
+    });
+
+    stableSnacks = stableSnacks.filter(function(oneSnack){
+      return !oneSnack.isEaten;
+    });
+
 
     fixedSnacks.forEach((oneSnack) => {
       var isCollision = checkCollision(newPlayer,oneSnack);
@@ -234,20 +291,29 @@ var $gameOverDiv =
 ("<div class='game-over'></div>");
 
 var $winner =
-("<img src='./images/win.gif'>");
+("<img src='./images/win.gif'> <button class='try-btn btn'>PLAY AGAIN</button>");
 
 var $loser =
-("<img src='./images/lose.gif'>")
+("<img src='./images/lose.gif'><button class='try-btn btn'>TRY AGAIN</button>")
 
-var $tryAgain =
-("<button>Play Again</button>")
 
   $('.start-btn').click(() => {
     $('.start-page').fadeOut('2');
     startCountdown();
+    initSuperSnacks();
     addingSnacks();
     initGame()
   });
+
+
+  // $('.try-btn').click(() => {
+  //   document.reload();
+  //   $('.game-over').toggle();
+  //   startCountdown();
+  //   initSuperSnacks();
+  //   addingSnacks();
+  //   initGame()
+  // });
 
   // $($gameOverDiv).hide().appendTo(".layout").fadeIn(500);
 
