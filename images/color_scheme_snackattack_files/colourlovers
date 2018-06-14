@@ -1,4 +1,0 @@
-if(typeof(async_site_pixel_request_sent) == "undefined") {
-    
-    var async_site_pixel_request_sent = 1;
-}
