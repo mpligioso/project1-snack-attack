@@ -38,7 +38,8 @@ span {
 
 .start-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-evenly;
   position: absolute;
   width: 800px;
   height: 600px;
@@ -46,7 +47,51 @@ span {
   background: rgb(216,216,216);
 }
 
+.instructions {
+  position: absolute;
+  width: 100vw;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  background: rgb(216,216,216);
+}
 
+.instructions section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.col-3{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.padded {
+  padding: 10px 0;
+}
+
+.instructions p {
+  margin: 0;
+}
+
+.instructions h1,
+.instructions h2 {
+  font-size: 1.5em;
+}
+
+.instructions img {
+  width: 40px;
+  height: 100%;
+}
+
+.instructions button {
+  font-size: 1.3em;
+  padding: 10px 35px;
+  margin: 2em;
+}
 
 .game-over{
   display: flex;

@@ -487,7 +487,7 @@ function updateSnacks(snackArray) {
 function resetSpeed(){
   setInterval(function(){
     newPlayer.speed = 10
-  }, 5000)
+  }, 10000)
 }
 
 
@@ -553,13 +553,24 @@ function runGame() {
 
 // $(document).ready(function() {
 
+
   $('.start-btn').click(() => {
     $('.start-page').fadeOut('2');
     runGame();
 
   });
 
+  $('.instructions').hide();
 
+$('.how-to').click(()=> {
+  $('.instructions').toggle();
+  $('.side-style').toggle();
+})
+
+$('.return-btn').click(() => {
+  $('.instructions').hide();
+  $('.side-style').toggle();
+});
 
 
 // });
