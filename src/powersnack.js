@@ -73,13 +73,13 @@ function Sound(src) {
 // function Player (myImage){
 function Player (myImage){
   this.image = myImage;
-  this.width = 50;
-  this.height = 50;
+  this.width = 70;
+  this.height = 70;
 
   this.x = 400;
   this.y = 300;
 
-  this.speed = 1;
+  this.speed = 10;
   this.points = 0;
   // this.direction = undefined;
 
@@ -148,29 +148,29 @@ Player.prototype.move = function(){
   document.onkeydown = (e) => {
     switch (e.keyCode) {
       case 38:
-        if (this.y - 10 > 10){
-        this.y -= 10;
+        if (this.y - this.speed > this.speed){
+        this.y -= this.speed;
         this.direction = "up";
         };
         e.preventDefault()
         break;
       case 40:
-        if (this.y + 10 < canvas.height-10){
-        this.y += 10;
+        if (this.y + this.speed < canvas.height-this.speed){
+        this.y += this.speed;
         this.direction = "down";
         };
         e.preventDefault()
         break;
       case 37:
-        if (this.x - 10 > 10){
-        this.x -= 10;
+        if (this.x - this.speed > this.speed){
+        this.x -= this.speed;
         this.direction = "left";
         };
         e.preventDefault()
         break;
       case 39:
-        if (this.x + 10 < canvas.width-10) {
-        this.x += 10;
+        if (this.x + this.speed < canvas.width-this.speed) {
+        this.x += this.speed;
         this.direction = "right";
         };
         e.preventDefault()
@@ -180,8 +180,14 @@ Player.prototype.move = function(){
 };
 
 Player.prototype.receivePoints = function (snack) {
-  this.points += snack.points
+  this.points += snack.points;
 };
+
+Player.prototype.receiveSpeed = function (snack){
+  if (snack.hasSpeed){
+    this.speed += snack.speed;
+  };
+}
 
 //snack model
 function Snack(myImage, width, height) {
@@ -197,7 +203,7 @@ function Snack(myImage, width, height) {
   this.isGood = true;
 
   this.hasSpeed = false;
-
+  this.speed = undefined;
   this.points = 5;
 
   // this.density = 5;
@@ -217,7 +223,7 @@ function SuperSnack (myImage, width, height){
   Snack.call(this, myImage, width, height);
   this.x = Math.floor(Math.random()* (canvas.width-30));
   this.y = Math.floor(Math.random()* (canvas.height-30));
-
+  this.isBonus = true;
   this.points = Math.floor(Math.random() * 50)
   // this.density = 0;
 }
@@ -244,34 +250,36 @@ var ctx = canvas.getContext('2d');
 var timer = 10;
 
 // Images
+
 var playerImg = new Image();
-playerImg.src = "./images/pacman-spritesheet.png"
+playerImg.src = "./images/character.png"
 
+//++ Foods
 var friesImg = new Image();
-friesImg.src = "./images/fries.png"
+friesImg.src = "./images/fries1.png"
 
-var bigMacImg = new Image();
-bigMacImg.src = "./images/bigmac.png"
+var burgerImg = new Image();
+burgerImg.src = "./images/burger.png"
 
-var pizzaImg = new Image();
-pizzaImg.src = "./images/pizza.png"
+var hotdogImg = new Image();
+hotdogImg.src = "./images/hotdog.png"
+
+var tacoImg = new Image();
+tacoImg.src = "./images/taco.png"
 
 
-
-var beerImg = new Image();
-beerImg.src = "./images/Beer.png"
+//BONUS FOODS
+var icelollyImg = new Image();
+icelollyImg.src = "./images/icelolly.png"
 
 var donutImg = new Image();
-donutImg.src = "./images/donut.png"
+donutImg.src = "./images/donut1.png"
 
-var colaImg = new Image();
-colaImg.src = "./images/cola.png"
-
-var lemonlimeImg = new Image();
-lemonlimeImg.src = "./images/cola.png"
+var pizzaImg = new Image();
+pizzaImg.src = "./images/pizza1.png"
 
 
-
+//-- Foods
 var tomatoImg = new Image();
 tomatoImg.src = "./images/Tomato.png"
 
@@ -284,7 +292,19 @@ eggplantImg.src = "./images/Eggplant.png"
 var onionImg = new Image();
 onionImg.src = "./images/Onion.png"
 
+var bananaImg = new Image();
+bananaImg.src = "./images/banana.png"
 
+var carrotImg = new Image();
+carrotImg.src = "./images/carrot.png"
+
+var poivronImg = new Image();
+poivronImg.src = "./images/poivron.png"
+
+var pumpkinImg = new Image();
+pumpkinImg.src = "./images/pumpkin.png"
+
+//Audio files
 var winningMusic = new Sound("./sounds/applause3.mp3");
 var losingMusic = new Sound("./sounds/fail.wav")
 var backgroundMusic = new Sound("./sounds/background-music.mp3")
@@ -294,17 +314,32 @@ var superBonus = new Sound("./sounds/Bonus.wav")
 
 var newPlayer = new Player(playerImg);
 
-var snackImages = [eggplantImg,
+var badSnackImages = [eggplantImg,
   onionImg,
   turnipImg,
   tomatoImg,
-  bigMacImg,
-  pizzaImg,
-  colaImg];
+  bananaImg,
+  poivronImg,
+  pumpkinImg,
+  carrotImg];
+
+var goodSnackImages = [friesImg,
+burgerImg,
+hotdogImg,
+tacoImg,
+icelollyImg,
+donutImg,
+pizzaImg];
+
+// var superSnackImages = [icelollyImg,
+// donutImg,
+// pizzaImg];
 
 var fixedSnacks = [];
 
 var movingSnacks = [];
+
+var stableSnacks = [];
 
 function checkCollision(objA, objB){
   return objA.x < objB.x + objB.width &&
@@ -339,68 +374,80 @@ function isGameOver(){
 };
 
 
-
 function startCountdown() {
   timerCountdown =
   setInterval(() => {
       if (timer >= 0){
         $('.timer span').text(timer);
         timer --;
-        console.log(timer)
         };
       }, 1000);
     };
 
-var stableSnacks = [];
 
-function initSuperSnacks(){
-  for (var i =0; i < 3; i++){
-    stableSnacks.push(new SuperSnack(beerImg, 50, 50));
-    console.log(stableSnacks)
-  };
+// function initSuperSnacks(){
+//   for (var i =0; i < 3; i++){
+//     stableSnacks.push(new SuperSnack(donutImg, 40, 40));
+//     console.log(stableSnacks)
+//   };
 
-  stableSnacks = stableSnacks.filter((item) => {
-    return Math.abs(newPlayer.x - item.x) > 50 || Math.abs(newPlayer.y - item.y) > 50;
-  });
-}
+//   stableSnacks = stableSnacks.filter((item) => {
+//     return Math.abs(newPlayer.x - item.x) > 50 || Math.abs(newPlayer.y - item.y) > 50;
+//   });
+// }
 
 function addingSnacks() {
   addSnacks =
   setInterval(() => {
-    var randomNumber = Math.floor(Math.random() * snackImages.length)
-    var fixedImage = snackImages[randomNumber];
+    var randomNumber = Math.floor(Math.random() * badSnackImages.length)
+    var fixedImage = badSnackImages[randomNumber];
     var height = 50;
 
     var newSnack = new Snack(fixedImage, 50, height);
-    if (fixedImage === tomatoImg || fixedImage === eggplantImg ||
-      fixedImage === onionImg || fixedImage === turnipImg){
-      newSnack.isGood = false;
-      newSnack.points *= -1;
+    newSnack.isGood = false;
+    if (fixedImage === onionImg){
+      newSnack.speed = 5;
     }
-    if(fixedSnacks.length < 15){
+
+    // if (fixedImage === tomatoImg || fixedImage === eggplantImg ||
+    //   fixedImage === onionImg || fixedImage === turnipImg){
+    //   newSnack.isGood = false;
+      newSnack.points *= -1;
+    // }
+    if(fixedSnacks.length < 7){
       fixedSnacks.push(newSnack);
     };
-  }, 800)
+  }, 600)
 };
 
 
 function addingMovingSnacks() {
   addMovingSnacks =
   setInterval(() => {
-    var randomNumber = Math.floor(Math.random() * snackImages.length)
-    var fixedImage = snackImages[randomNumber];
+    var randomNumber = Math.floor(Math.random() * goodSnackImages.length)
+    var fixedImage = goodSnackImages[randomNumber];
     var height = 50;
 
-    var newSnack = new MovingSnack(fixedImage, 50, height);
-    if ((fixedImage === tomatoImg) || (fixedImage === eggplantImg) ||
-      (fixedImage === onionImg) || (fixedImage === turnipImg)){
-      newSnack.isGood = false;
-      newSnack.points *= -1;
-    }
-    if(movingSnacks.length < 7){
-      movingSnacks.push(newSnack);
+    var newSnack = new Snack(fixedImage, 50, height);
+    if (fixedImage === pizzaImg || fixedImage === donutImg
+    || fixedImage === icelollyImg) {
+      newSnack.hasSpeed = true;
     };
-  }, 10000)
+    if (fixedImage === pizzaImg) {
+      newSnack.speed = 20;
+    }
+    if (fixedImage === donutImg) {
+      newSnack.speed = 30;
+    }
+    if (fixedImage === icelollyImg){
+      newSnack.speed = 40;
+    };
+
+    if(movingSnacks.length < 5){
+      movingSnacks.push(newSnack);
+
+    };
+  }, 800)
 };
 
 // function updateSnackMovement(){
@@ -421,9 +468,11 @@ function updateSnacks(snackArray) {
     if (isCollision){
       oneSnack.isEaten = true;
       newPlayer.receivePoints(oneSnack)
+      newPlayer.receiveSpeed(oneSnack)
       if (!oneSnack.isGood){
         badFood.play();
-      } else if (oneSnack.isSuper){
+      }
+      if (oneSnack.isBonus){
         superBonus.play();
       }
     }
@@ -434,6 +483,12 @@ function updateSnacks(snackArray) {
     return !oneSnack.isEaten;
   });
 };
+
+function resetSpeed(){
+  setInterval(function(){
+    newPlayer.speed = 10
+  }, 5000)
+}
 
 
 function initGame () {
@@ -462,24 +517,25 @@ function initGame () {
       backgroundMusic.stop()
       ctx.clearRect(0,0,canvas.width,canvas.height)
     }
-  }, 1000/60);
+  }, 1000/30);
 };
 
 function resetGame(){
   isOver = false;
-  timer = 10;
+  timer = 60;
   stableSnacks = []
   fixedSnacks = []
   newPlayer.points = 0;
 }
 
 function runGame() {
+  resetGame();
   startCountdown();
-  initSuperSnacks();
+  resetSpeed();
+  // initSuperSnacks();
   addingSnacks();
   addingMovingSnacks();
   initGame();
-  resetGame();
 };
 
 
