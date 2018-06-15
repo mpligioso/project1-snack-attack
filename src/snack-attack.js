@@ -8,7 +8,7 @@ function Player (snackboard){
   //starting point
   this.x = 400;
   this.y = 300;
-  this.speed = 0;
+  this.speed = 10;
   this.points = 0;
   // this.image = new Image();
   this.snackboard = snackboard;

@@ -183,11 +183,11 @@ Player.prototype.receivePoints = function (snack) {
   this.points += snack.points;
 };
 
-Player.prototype.receiveSpeed = function (snack){
-  if (snack.hasSpeed){
-    this.speed += snack.speed;
-  };
-}
+// Player.prototype.receiveSpeed = function (snack){
+//   if (snack.hasSpeed){
+//     this.speed += snack.speed;
+//   };
+// }
 
 //snack model
 function Snack(myImage, width, height) {
@@ -201,9 +201,10 @@ function Snack(myImage, width, height) {
   this.isEaten = false;
 
   this.isGood = true;
-
-  this.hasSpeed = false;
-  this.speed = undefined;
+  this.isSuper = false;
+  this.isPowerful = false;
+  // this.hasSpeed = false;
+  // this.speed = undefined;
   this.points = 5;
 
   // this.density = 5;
@@ -326,20 +327,17 @@ var badSnackImages = [eggplantImg,
 var goodSnackImages = [friesImg,
 burgerImg,
 hotdogImg,
-tacoImg,
-icelollyImg,
+tacoImg];
+
+var superSnackImages = [icelollyImg,
 donutImg,
 pizzaImg];
 
-// var superSnackImages = [icelollyImg,
-// donutImg,
-// pizzaImg];
+var badSnacks = [];
 
-var fixedSnacks = [];
+var goodSnacks = [];
 
-var movingSnacks = [];
-
-var stableSnacks = [];
+var superSnacks = [];
 
 function checkCollision(objA, objB){
   return objA.x < objB.x + objB.width &&
@@ -396,8 +394,8 @@ function startCountdown() {
 //   });
 // }
 
-function addingSnacks() {
-  addSnacks =
+function addingBadSnacks() {
+  addBadSnacks =
   setInterval(() => {
     var randomNumber = Math.floor(Math.random() * badSnackImages.length)
     var fixedImage = badSnackImages[randomNumber];
@@ -405,49 +403,60 @@ function addingSnacks() {
 
     var newSnack = new Snack(fixedImage, 50, height);
     newSnack.isGood = false;
-    if (fixedImage === onionImg){
-      newSnack.speed = 5;
-    }
 
-    // if (fixedImage === tomatoImg || fixedImage === eggplantImg ||
-    //   fixedImage === onionImg || fixedImage === turnipImg){
-    //   newSnack.isGood = false;
-      newSnack.points *= -1;
+    newSnack.points *= -1;
+
+    if (fixedImage === onionImg){
+      newSnack.points = Math.floor(Math.random()*35);
+    }
     // }
-    if(fixedSnacks.length < 7){
-      fixedSnacks.push(newSnack);
+    if(badSnacks.length < 7){
+      badSnacks.push(newSnack);
     };
   }, 600)
 };
 
 
-function addingMovingSnacks() {
-  addMovingSnacks =
+function addingGoodSnacks() {
+  addGoodSnacks =
   setInterval(() => {
     var randomNumber = Math.floor(Math.random() * goodSnackImages.length)
     var fixedImage = goodSnackImages[randomNumber];
     var height = 50;
 
     var newSnack = new Snack(fixedImage, 50, height);
-    if (fixedImage === pizzaImg || fixedImage === donutImg
-    || fixedImage === icelollyImg) {
-      newSnack.hasSpeed = true;
+
+    if(goodSnacks.length < 5){
+      goodSnacks.push(newSnack);
+
     };
+  }, 600)
+};
+
+function addingSuperSnacks(){
+  addSuperSnacks =
+  setInterval(() => {
+    var randomNumber = Math.floor(Math.random() * superSnackImages.length)
+    var fixedImage = superSnackImages[randomNumber];
+    var height = 50;
+
+    var newSnack = new Snack(fixedImage, 50, height);
+    newSnack.isSuper = true;
+
     if (fixedImage === pizzaImg) {
-      newSnack.speed = 20;
+      newSnack.points = 15;
     }
     if (fixedImage === donutImg) {
-      newSnack.speed = 30;
+      newSnack.isPowerful = true;
     }
     if (fixedImage === icelollyImg){
-      newSnack.speed = 40;
+      newSnack.points = Math.floor(Math.random()*45);
     };
 
-    if(movingSnacks.length < 5){
-      movingSnacks.push(newSnack);
-
+    if(superSnacks.length < 3){
+      superSnacks.push(newSnack);
     };
-  }, 800)
+  }, 3000)
 };
 
 // function updateSnackMovement(){
@@ -468,11 +477,10 @@ function updateSnacks(snackArray) {
     if (isCollision){
       oneSnack.isEaten = true;
       newPlayer.receivePoints(oneSnack)
-      newPlayer.receiveSpeed(oneSnack)
       if (!oneSnack.isGood){
         badFood.play();
       }
-      if (oneSnack.isBonus){
+      if (oneSnack.isSuper){
         superBonus.play();
       }
     }
@@ -504,15 +512,17 @@ function initGame () {
 
     $('.points span').text(newPlayer.points);
 
-    stableSnacks = updateSnacks(stableSnacks);
-    fixedSnacks = updateSnacks(fixedSnacks);
-    movingSnacks = updateSnacks(movingSnacks);
+    badSnacks = updateSnacks(badSnacks);
+    goodSnacks = updateSnacks(goodSnacks);
+    superSnacks = updateSnacks(superSnacks);
 
 
     isGameOver();
     if(isOver){
       clearInterval(drawGame);
-      clearInterval(addSnacks);
+      clearInterval(addGoodSnacks);
+      clearInterval(addBadSnacks);
+      clearInterval(addSuperSnacks);
       clearInterval(timerCountdown);
       backgroundMusic.stop()
       ctx.clearRect(0,0,canvas.width,canvas.height)
@@ -533,8 +543,9 @@ function runGame() {
   startCountdown();
   resetSpeed();
   // initSuperSnacks();
-  addingSnacks();
-  addingMovingSnacks();
+  addingBadSnacks();
+  addingGoodSnacks();
+  addingSuperSnacks();
   initGame();
 };
 
