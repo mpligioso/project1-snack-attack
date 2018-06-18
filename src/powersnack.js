@@ -1,42 +1,14 @@
-//DEFINITIONS
-//-----------
+
 window.onload = function () {
 
-// function Animation(frameSet, delay){
-//   this.count = 0;
-//   this.delay = delay;
-//   this.frame = 0;
-//   this.frameIndex = 0;
-//   this.frameSet = frameSet
-// }
 
-// Animation.prototype.change = function (frameSet, delay=15){
-//   if(this.frameSet != frameSet){
-//     this.count = 0;
-//     this.delay = delay;
-//     this.frameIndex = 0;
-//     this.frameSet = frameSet,
-//     this.frame = this.frameSet[this.frameIndex]
-//   }
-// }
+//hide results div
+$('.instructions').hide();
+$('.game-over').hide();
 
-// Animation.prototype.update = function(){
-//   this.count ++;
-//   if (this.count >= this.delay){
-//     this.count = 0;
 
-//     this.frameIndex = (this.frameIndex == this.frameSet.length-1) ? 0: this.frameIndex + 1;
-//     this.frame = this.frameSet[this.frameIndex];
-//   }
-// }
-
-// spriteSheet = {
-//   frameSets: [[0,1,2,3,4,],[5,6,7,8,9]], //to right, to left
-//   image: new Image()
-// };
-
-// spriteSheet.image.src = "./images/pacman-spritesheet-movements.png"
-
+//DEFINITIONS
+//-----------
 function Sound(src) {
   this.sound = document.createElement("audio");
   this.sound.src = src;
@@ -52,25 +24,8 @@ function Sound(src) {
   }
 }
 
-// Sound.prototype.fadeOutAudio = function (){
-//     if(status != 'play') {
-//       return false;
-//     }
 
-//     var actualVolume = this.sound.volume;
-//     var fadeOutInterval = setInterval(function(){
-//         actualVolume = (parseFloat(actualVolume) - 0.1).toFixed(1);
-//         if(actualVolume >= 0){
-//             this.sound.volume = actualVolume;
-//         } else {
-//             this.sound.pause();
-//             status = 'pause';
-//             clearInterval(fadeOutInterval);
-//         }
-//     }, 50);
-// }
-
-// function Player (myImage){
+//Player constructor, animation to be developed
 function Player (myImage){
   this.image = myImage;
   this.width = 70;
@@ -81,97 +36,37 @@ function Player (myImage){
 
   this.speed = 10;
   this.points = 0;
-  // this.direction = undefined;
-
-  // animation = new Animation();
 }
 
-// loop = function () {
-//   if (newPlayer.direction === "right"){
-//     newPlayer.animation.change(spriteSheet.frameSet[0], 15);
-//   }
-
-//   if (newPlayer.direction === "left"){
-//     newPlayer.animation.change(spriteSheet.frameSet[1], 15);
-//   }
-
-//   render();
-//   window.requestAnimationFrame(loop);
-// }
-
-// render = function(){
-//   ctx.drawImage(sprite_sheet.image, player.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE, Math.floor(player.x), Math.floor(player.y), SPRITE_SIZE, SPRITE_SIZE);
-// }
-
-
-
+//methods for Player constructor
 Player.prototype.draw = function(){
   ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
 }
-// Player.prototype.render = function () {
-
-//   ctx.clearRect(0, 0, this.width, this.height);
-
-//   ctx.drawImage(
-//   this.image,
-//   0,
-//   frameIndex * this.width / numberOfFrames,
-//   0,
-//   this.width / numberOfFrames,
-//   this.height,
-//   0,
-//   0,
-//   this.width / numberOfFrames,
-//   this.height);
-// };
-
-// Player.prototype.update = function () {
-//       this.tickCount += 1;
-//       if (this.tickCount > this.ticksPerFrame) {
-//         tickCount = 0;
-//           // Go to the next frame
-//           if (frameIndex < numberOfFrames - 1) {
-//             // Go to the next framethat
-//             frameIndex += 1;
-//           } else {
-//             frameIndex = 0;
-//           }
-//         };
-// }
-
-// function gameLoop (player) {
-//   player.update();
-//   player.render();
-// }
 
 Player.prototype.move = function(){
   document.onkeydown = (e) => {
     switch (e.keyCode) {
       case 38:
-        if (this.y - this.speed > this.speed){
+        if (this.y - this.speed > 10){
         this.y -= this.speed;
-        this.direction = "up";
         };
         e.preventDefault()
         break;
       case 40:
-        if (this.y + this.speed < canvas.height-this.speed){
+        if (this.y + this.speed < canvas.height-10){
         this.y += this.speed;
-        this.direction = "down";
         };
         e.preventDefault()
         break;
       case 37:
-        if (this.x - this.speed > this.speed){
+        if (this.x - this.speed > 10){
         this.x -= this.speed;
-        this.direction = "left";
         };
         e.preventDefault()
         break;
       case 39:
-        if (this.x + this.speed < canvas.width-this.speed) {
+        if (this.x + this.speed < canvas.width-10) {
         this.x += this.speed;
-        this.direction = "right";
         };
         e.preventDefault()
         break;
@@ -183,13 +78,7 @@ Player.prototype.receivePoints = function (snack) {
   this.points += snack.points;
 };
 
-// Player.prototype.receiveSpeed = function (snack){
-//   if (snack.hasSpeed){
-//     this.speed += snack.speed;
-//   };
-// }
-
-//snack model
+//Snack constructor
 function Snack(myImage, width, height) {
   this.image = myImage;
   this.width = width;
@@ -203,8 +92,6 @@ function Snack(myImage, width, height) {
   this.isGood = true;
   this.isSuper = false;
   this.isPowerful = false;
-  // this.hasSpeed = false;
-  // this.speed = undefined;
   this.points = 5;
 
   // this.density = 5;
@@ -250,7 +137,7 @@ var canvas = document.getElementById('snackboard');
 var ctx = canvas.getContext('2d');
 var timer = 10;
 
-// Images
+// Image variables
 
 var playerImg = new Image();
 playerImg.src = "./images/character.png"
@@ -339,16 +226,16 @@ var goodSnacks = [];
 
 var superSnacks = [];
 
+var isOver = false;
+
+//Check if objects have touched
+
 function checkCollision(objA, objB){
   return objA.x < objB.x + objB.width &&
   objA.x + objA.width > objB.x &&
   objA.y < objB.y + objB.height &&
   objA.height + objA.y > objB.y;
 }
-
-var isOver = false;
-
-$('.game-over').hide();
 
 function isGameOver(){
   if (timer < 0){
@@ -357,9 +244,11 @@ function isGameOver(){
     $('.game-over').fadeIn(500);
 
     if (newPlayer.points > 100) {
+      $("#loser").hide();
       $("#winner").show();
       winningMusic.play();
     } else {
+      $("#winner").hide();
       $("#loser").show();
       losingMusic.play()
     }
@@ -571,7 +460,7 @@ function runGame() {
 
   });
 
-  $('.instructions').hide();
+
 
 $('.how-to').click(()=> {
   $('.instructions').toggle();
