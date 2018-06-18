@@ -2,11 +2,6 @@
 window.onload = function () {
 
 
-//hide results div
-$('.instructions').hide();
-$('.game-over').hide();
-
-
 //DEFINITIONS
 //-----------
 function Sound(src) {
@@ -230,123 +225,88 @@ var isOver = false;
 
 //Check if objects have touched
 
-function checkCollision(objA, objB){
-  return objA.x < objB.x + objB.width &&
-  objA.x + objA.width > objB.x &&
-  objA.y < objB.y + objB.height &&
-  objA.height + objA.y > objB.y;
-}
-
-function isGameOver(){
-  if (timer < 0){
-    isOver = true;
-
-    $('.game-over').fadeIn(500);
-
-    if (newPlayer.points > 100) {
-      $("#loser").hide();
-      $("#winner").show();
-      winningMusic.play();
-    } else {
-      $("#winner").hide();
-      $("#loser").show();
-      losingMusic.play()
-    }
-
-    $('.try-btn').click(function() {
-      $('.game-over').hide();
-      runGame();
-    });
+  function checkCollision(objA, objB){
+    return objA.x < objB.x + objB.width &&
+    objA.x + objA.width > objB.x &&
+    objA.y < objB.y + objB.height &&
+    objA.height + objA.y > objB.y;
   }
-};
+
+  function startCountdown() {
+    timerCountdown =
+    setInterval(() => {
+        if (timer >= 0){
+          $('.timer span').text(timer);
+          timer --;
+          };
+        }, 1000);
+      };
 
 
-function startCountdown() {
-  timerCountdown =
-  setInterval(() => {
-      if (timer >= 0){
-        $('.timer span').text(timer);
-        timer --;
-        };
-      }, 1000);
-    };
+  function addingBadSnacks() {
+    addBadSnacks =
+    setInterval(() => {
+      var randomNumber = Math.floor(Math.random() * badSnackImages.length)
+      var fixedImage = badSnackImages[randomNumber];
+      var height = 50;
+
+      var newSnack = new Snack(fixedImage, 50, height);
+      newSnack.isGood = false;
+
+      newSnack.points *= -1;
+
+      if (fixedImage === onionImg){
+        newSnack.points = Math.floor(Math.random()*35);
+      }
+      // }
+      if(badSnacks.length < 7){
+        badSnacks.push(newSnack);
+      };
+    }, 600)
+  };
 
 
-// function initSuperSnacks(){
-//   for (var i =0; i < 3; i++){
-//     stableSnacks.push(new SuperSnack(donutImg, 40, 40));
-//     console.log(stableSnacks)
-//   };
+  function addingGoodSnacks() {
+    addGoodSnacks =
+    setInterval(() => {
+      var randomNumber = Math.floor(Math.random() * goodSnackImages.length)
+      var fixedImage = goodSnackImages[randomNumber];
+      var height = 50;
 
-//   stableSnacks = stableSnacks.filter((item) => {
-//     return Math.abs(newPlayer.x - item.x) > 50 || Math.abs(newPlayer.y - item.y) > 50;
-//   });
-// }
+      var newSnack = new Snack(fixedImage, 50, height);
 
-function addingBadSnacks() {
-  addBadSnacks =
-  setInterval(() => {
-    var randomNumber = Math.floor(Math.random() * badSnackImages.length)
-    var fixedImage = badSnackImages[randomNumber];
-    var height = 50;
+      if(goodSnacks.length < 5){
+        goodSnacks.push(newSnack);
 
-    var newSnack = new Snack(fixedImage, 50, height);
-    newSnack.isGood = false;
+      };
+    }, 600)
+  };
 
-    newSnack.points *= -1;
+  function addingSuperSnacks(){
+    addSuperSnacks =
+    setInterval(() => {
+      var randomNumber = Math.floor(Math.random() * superSnackImages.length)
+      var fixedImage = superSnackImages[randomNumber];
+      var height = 50;
 
-    if (fixedImage === onionImg){
-      newSnack.points = Math.floor(Math.random()*35);
-    }
-    // }
-    if(badSnacks.length < 7){
-      badSnacks.push(newSnack);
-    };
-  }, 600)
-};
+      var newSnack = new Snack(fixedImage, 50, height);
+      newSnack.isSuper = true;
 
+      if (fixedImage === pizzaImg) {
+        newSnack.points = 15;
+      }
+      if (fixedImage === donutImg) {
+        newSnack.isPowerful = true;
+      }
+      if (fixedImage === icelollyImg){
+        newSnack.points = Math.floor(Math.random()*45);
+      };
 
-function addingGoodSnacks() {
-  addGoodSnacks =
-  setInterval(() => {
-    var randomNumber = Math.floor(Math.random() * goodSnackImages.length)
-    var fixedImage = goodSnackImages[randomNumber];
-    var height = 50;
-
-    var newSnack = new Snack(fixedImage, 50, height);
-
-    if(goodSnacks.length < 5){
-      goodSnacks.push(newSnack);
-
-    };
-  }, 600)
-};
-
-function addingSuperSnacks(){
-  addSuperSnacks =
-  setInterval(() => {
-    var randomNumber = Math.floor(Math.random() * superSnackImages.length)
-    var fixedImage = superSnackImages[randomNumber];
-    var height = 50;
-
-    var newSnack = new Snack(fixedImage, 50, height);
-    newSnack.isSuper = true;
-
-    if (fixedImage === pizzaImg) {
-      newSnack.points = 15;
-    }
-    if (fixedImage === donutImg) {
-      newSnack.isPowerful = true;
-    }
-    if (fixedImage === icelollyImg){
-      newSnack.points = Math.floor(Math.random()*45);
-    };
-
-    if(superSnacks.length < 3){
-      superSnacks.push(newSnack);
-    };
-  }, 3000)
-};
+      if(superSnacks.length < 3){
+        superSnacks.push(newSnack);
+      };
+    }, 3000)
+  };
 
 // function updateSnackMovement(){
 //   isMoving =
@@ -360,99 +320,114 @@ function addingSuperSnacks(){
 //   },20)
 // }
 
-function updateSnacks(snackArray) {
-  snackArray.forEach((oneSnack) => {
-    var isCollision = checkCollision(newPlayer,oneSnack);
-    if (isCollision){
-      oneSnack.isEaten = true;
-      newPlayer.receivePoints(oneSnack)
-      if (!oneSnack.isGood){
-        badFood.play();
+  function updateSnacks(snackArray) {
+    snackArray.forEach((oneSnack) => {
+      var isCollision = checkCollision(newPlayer,oneSnack);
+      if (isCollision){
+        oneSnack.isEaten = true;
+        newPlayer.receivePoints(oneSnack)
+        if (!oneSnack.isGood){
+          badFood.play();
+        }
+        if (oneSnack.isSuper){
+          superBonus.play();
+        }
       }
-      if (oneSnack.isSuper){
-        superBonus.play();
-      }
-    }
-    oneSnack.draw();
-  });
+      oneSnack.draw();
+    });
 
-  return snackArray.filter(function(oneSnack){
-    return !oneSnack.isEaten;
-  });
-};
+    return snackArray.filter(function(oneSnack){
+      return !oneSnack.isEaten;
+    });
+  };
 
-function resetSpeed(){
-  setInterval(function(){
-    newPlayer.speed = 10
-  }, 10000)
-}
-
-
-function initGame () {
-  if(!isOver){
-    backgroundMusic.play();
+  function resetSpeed(){
+    setInterval(function(){
+      newPlayer.speed = 10
+    }, 10000)
   }
-  drawGame =
-  setInterval(() => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    newPlayer.draw();
-    newPlayer.move();
-
-    $('.points span').text(newPlayer.points);
-
-    badSnacks = updateSnacks(badSnacks);
-    goodSnacks = updateSnacks(goodSnacks);
-    superSnacks = updateSnacks(superSnacks);
 
 
-    isGameOver();
-    if(isOver){
-      clearInterval(drawGame);
-      clearInterval(addGoodSnacks);
-      clearInterval(addBadSnacks);
-      clearInterval(addSuperSnacks);
-      clearInterval(timerCountdown);
-      backgroundMusic.stop()
-      ctx.clearRect(0,0,canvas.width,canvas.height)
+  function initGame () {
+    if(!isOver){
+      backgroundMusic.play();
     }
-  }, 1000/30);
-};
+    drawGame =
+    setInterval(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-function resetGame(){
-  isOver = false;
-  timer = 60;
-  stableSnacks = []
-  fixedSnacks = []
-  newPlayer.points = 0;
-}
+      newPlayer.draw();
+      newPlayer.move();
 
-function runGame() {
-  resetGame();
-  startCountdown();
-  resetSpeed();
-  // initSuperSnacks();
-  addingBadSnacks();
-  addingGoodSnacks();
-  addingSuperSnacks();
-  initGame();
-};
+      $('.points span').text(newPlayer.points);
+
+      badSnacks = updateSnacks(badSnacks);
+      goodSnacks = updateSnacks(goodSnacks);
+      superSnacks = updateSnacks(superSnacks);
+
+
+      isGameOver();
+      if(isOver){
+        clearInterval(drawGame);
+        clearInterval(addGoodSnacks);
+        clearInterval(addBadSnacks);
+        clearInterval(addSuperSnacks);
+        clearInterval(timerCountdown);
+        backgroundMusic.stop()
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+      }
+    }, 1000/30);
+  };
+
+  function resetGame(){
+    isOver = false;
+    timer = 60;
+    stableSnacks = []
+    fixedSnacks = []
+    newPlayer.points = 0;
+  }
+
+  function runGame() {
+    resetGame();
+    startCountdown();
+    resetSpeed();
+    addingBadSnacks();
+    addingGoodSnacks();
+    addingSuperSnacks();
+    initGame();
+  };
 
 
 // DOM && Other
 //----------------------------
 
-// var $gameOverDiv =
-// ("<div class='game-over'></div>");
+//hide results div
+$('.instructions').hide();
+$('.game-over').hide();
 
-// var $winner =
-// ("<img src='./images/win.gif'><br><button class='try-btn btn'>PLAY AGAIN</button>");
 
-// var $loser =
-// ("<img src='./images/lose.gif'><br><button class='try-btn btn'>TRY AGAIN</button>")
+  function isGameOver(){
+    if (timer < 0){
+      isOver = true;
 
-// $(document).ready(function() {
+      $('.game-over').fadeIn(500);
 
+      if (newPlayer.points > 100) {
+        $("#loser").hide();
+        $("#winner").show();
+        winningMusic.play();
+      } else {
+        $("#winner").hide();
+        $("#loser").show();
+        losingMusic.play()
+      }
+
+      $('.try-btn').click(function() {
+        $('.game-over').hide();
+        runGame();
+      });
+    }
+  };
 
   $('.start-btn').click(() => {
     $('.start-page').fadeOut('2');
@@ -461,21 +436,17 @@ function runGame() {
   });
 
 
+  $('.how-to').click(()=> {
+    $('.instructions').toggle();
+    $('.side-style').toggle();
+  })
 
-$('.how-to').click(()=> {
-  $('.instructions').toggle();
-  $('.side-style').toggle();
-})
-
-$('.return-btn').click(() => {
-  $('.instructions').hide();
-  $('.side-style').toggle();
-});
+  $('.return-btn').click(() => {
+    $('.instructions').hide();
+    $('.side-style').toggle();
+  });
 
 
-// });
-
-  // $($gameOverDiv).hide().appendTo(".layout").fadeIn(500);
 
 };
 
