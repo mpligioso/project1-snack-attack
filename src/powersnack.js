@@ -374,6 +374,8 @@ var isOver = false;
         clearInterval(addSuperSnacks);
         clearInterval(timerCountdown);
         backgroundMusic.stop()
+        backgroundMusic.currentTime = 0;
+
         ctx.clearRect(0,0,canvas.width,canvas.height)
       }
     }, 1000/30);
@@ -382,8 +384,9 @@ var isOver = false;
   function resetGame(){
     isOver = false;
     timer = 60;
-    stableSnacks = []
-    fixedSnacks = []
+    badSnacks = [];
+    goodSnacks = [];
+    superSnacks = [];
     newPlayer.points = 0;
   }
 

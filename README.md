@@ -1,4 +1,4 @@
-#Snack Attack
+# Snack Attack
 
 The first project completed during the Ironhack Web Development Bootcamp. Solo project, completed in 4 days.
 
